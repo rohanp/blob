@@ -25,29 +25,33 @@ function preload() {
 
 
 function create() {
-
+	
 	blobs= game.add.group();
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	//creating the initial blob
 	var blob = blobs.create(game.world.centerX,game.world.centerX,'blob');
+
+	blob.anchor.setTo(.5,null);
+	console.log(blob.size);
 	blob.anchor.set(0.5);
 	blob.inputEnabled= true;
 	blob.events.onInputDown.add(listener, this);
 	game.physics.enable(blob, Phaser.Physics.ARCADE);
-	blob.body.velocity.setTo(150,150);
+	blob.body.velocity.setTo(50,50);
 	blob.body.collideWorldBounds=true;
 	blob.body.bounce.set(1);
+	//createBlob(blob);
+
+	console.log(blob.width);
 }
 
 function update() {
-	blobs.callAllExists(checkOutofBounds);
-}
-
-function checkOutofBounds(blob){
-	if(blob.x<10 || blob.y <10){
+	blobs.forEachExists(function checkOutofBounds(blob){
+	if( blob.x -blob.width/2<=0 || blob.y-blob.height/2<=0 || blob.y+ blob.height/2>=game.world._height || blob.x +blob.width/2>= game.world._width){
 		gameOver();
 	}
+	});
 }
 
 function listener(blob) {
@@ -61,35 +65,45 @@ function listener(blob) {
 	blob.destroy();
 }
 
+
+
 function createBlob(oldBlob){
 	var blob = blobs.create(oldBlob.x,oldBlob.y,'blob');
-
+	//blob.setAnchor
 	if(oldBlob.scale.x>.25){
 		blob.scale.setTo(oldBlob.scale.x * .5,oldBlob.scale.y * .5);
 	}
 	else{
 		blob.scale.setTo(.1, .1);
 	}
+
+	blob.anchor.setTo(0.5,null);
 	blob.inputEnabled= true;
 	blob.events.onInputDown.add(listener, this);
 
 	game.physics.enable(blob, Phaser.Physics.ARCADE);
-	blob.body.collideWorldBounds=true;
+	//blob.body.collideWorldBounds=true;
 	blob.body.bounce.set(1);
 
 	vel = getVelocity(oldBlob);
-
+	blob.body.collideWorldBounds=true;
 	var vx = game.rnd.realInRange(-vel[0], vel[0]);
 	var vy = game.rnd.realInRange(-vel[1], vel[1]);
 	blob.body.velocity.setTo(vx, vy);
 
 }
 
+
+
 function getVelocity(oldBlob){
 	return [-50,50];
 }
 
 function gameOver(){
+	blobs.forEachExists(function freeze(blob){
+		blob.body.velocity.setTo(0,0);
+		blob.events.onInputDown.removeAll();
+	});
 	console.log('game over!');
 }
 
