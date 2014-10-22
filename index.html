@@ -18,6 +18,12 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 
 var blobs;
+var bigText;
+var bigStyle;
+var timer;
+var timerText;
+var smallStyle;
+var cSec;
 
 function preload() {
 	game.load.image('blob', 'sprite.png');
@@ -25,15 +31,20 @@ function preload() {
 
 
 function create() {
-	
+	timer = game.time.create(false);
+	timer.loop(10, updateTime, this);
+	var text="Time: "
+	cSec=0;
+	smallStyle = { font: "45px Arial", fill: "#ffffff", align: "center" };
+	timerText = game.add.text(20, game.world._height-50, text, smallStyle);
+	timer.start();
+
 	blobs= game.add.group();
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	//creating the initial blob
 	var blob = blobs.create(game.world.centerX,game.world.centerX,'blob');
-
 	blob.anchor.setTo(.5,null);
-	console.log(blob.size);
 	blob.anchor.set(0.5);
 	blob.inputEnabled= true;
 	blob.events.onInputDown.add(listener, this);
@@ -41,9 +52,9 @@ function create() {
 	blob.body.velocity.setTo(50,50);
 	blob.body.collideWorldBounds=true;
 	blob.body.bounce.set(1);
+
 	//createBlob(blob);
 
-	console.log(blob.width);
 }
 
 function update() {
@@ -52,6 +63,11 @@ function update() {
 		gameOver();
 	}
 	});
+}
+
+function updateTime() {
+	timerText.setText(cSec/100);
+	cSec+=1;
 }
 
 function listener(blob) {
@@ -85,26 +101,35 @@ function createBlob(oldBlob){
 	//blob.body.collideWorldBounds=true;
 	blob.body.bounce.set(1);
 
-	vel = getVelocity(oldBlob);
 	blob.body.collideWorldBounds=true;
-	var vx = game.rnd.realInRange(-vel[0], vel[0]);
-	var vy = game.rnd.realInRange(-vel[1], vel[1]);
+
+	var vx = game.rnd.realInRange(-oldBlob.body.velocity.x*1.2, oldBlob.body.velocity.x*1.2);
+	var vy = game.rnd.realInRange(-oldBlob.body.velocity.y*1.2, oldBlob.body.velocity.y*1.2);
+
+	if(oldBlob.body.velocity.x*vx>0){
+		vx=vx*-1;
+	}
+	if(oldBlob.body.velocity.y*vy>0){
+		vy=vy*-1;
+	}
+
 	blob.body.velocity.setTo(vx, vy);
 
 }
 
 
 
-function getVelocity(oldBlob){
-	return [-50,50];
-}
-
 function gameOver(){
 	blobs.forEachExists(function freeze(blob){
 		blob.body.velocity.setTo(0,0);
 		blob.events.onInputDown.removeAll();
+		timer.stop();
 	});
-	console.log('game over!');
+	bigText="Game Over!"
+	bigStyle = { font: "65px Arial", fill: "#ffffff", align: "center" };
+
+	game.add.text(game.world.centerX-170, 0, bigText, bigStyle);
+
 }
 
 </script>
