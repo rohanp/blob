@@ -1,0 +1,22 @@
+
+h1{
+	background-color: white;
+	font-family: "Clear Sans", "Source Sans Pro", "Helvetica Neue", Helvetica;
+	font-size: 100px;
+	margin-bottom:0px;
+}
+
+
+div .label {
+  display:inline-block;
+  padding-top:0;
+  padding-bottom:0;
+  line-height:1.5em;
+} 
+
+
+.newGame{
+	margin-left: auto;
+	margin-right: auto;
+}
+
