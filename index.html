@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en"> 
 <head> 
 	<meta charset="UTF-8" />
@@ -16,7 +17,7 @@
 
 			<div>
 				<div class="col-md-1 col-md-offset-5">
-					<h2><span class="label label-block label-primary" id="best"> Best <br> 15</span></h2>
+					<h2><span class="label label-block label-primary" id="best"> Best <br> 0 </span></h2>
 				</div>
 				<div class="col-md-1">
 					<h2><span class="label label-block label-primary" id="score"> Score <br> 100 </span></h2>
@@ -55,13 +56,22 @@ var timer;
 var timerText;
 var smallStyle;
 var cSec;
+var gameOn;
+
+$('#newGame').click(function(){
+		newGame();
+	});
+
+$('#best').html("Best <br> " + localStorage.best);
 
 function preload() {
+
 	game.load.image('blob', 'sprite.png');
 }
 
 
 function create() {
+	gameOn=true;
 	timer = game.time.create(false);
 	timer.loop(100, updateTime, this);
 	cSec=0;
@@ -91,27 +101,23 @@ function update() {
 		gameOver();
 	}
 	});
-
-	$('#newGame').click(function(){
-		alert("button clicked!");
-		reset();
-	});
 }
 
 function updateTime() {
-	var score = ""+cSec/10;
-	if(score.indexOf('.')<=0){
-		score+=".0";
-	}
-	console.log(score);
-	var highScore = $('#best').text();
-	var startVal = highScore.search(/[0-9]+/);
-	highScore = parseInt(highScore.substring(startVal));
-	var s = "Score <br> " +score;
-	$('#score').html(s);
-	cSec+=1;
-	if(highScore<score){
-		$('#best').html("Best <br> "+score);
+	if(gameOn){
+		var score = ""+cSec/10;
+		if(score.indexOf('.')<=0){
+			score+=".0";
+		}
+		var highScore = $('#best').text();
+		var startIndex = highScore.search(/[0-9]+/);
+		highScore = parseInt(highScore.substring(startIndex));
+		var s = "Score <br> " +score;
+		$('#score').html(s);
+		cSec+=1;
+		if(highScore<score){
+			$('#best').html("Best <br> "+score);
+		}
 	}
 }
 
@@ -172,6 +178,13 @@ function createBlob(oldBlob){
 
 }
 
+function getScore(x){
+	var score = $(x).text();
+	var startIndex = score.search(/[0-9]+/);
+	highScore = parseFloat(score.substring(startIndex));
+	return highScore
+}
+
 
 
 function gameOver(){
@@ -182,9 +195,20 @@ function gameOver(){
 	});
 	bigText="Game Over!"
 	bigStyle = { font: "65px Arial", fill: "#ffffff", align: "center" };
-
+	gameOn=false;
 	game.add.text(game.world.centerX-170, 0, bigText, bigStyle);
 
+	if(getScore('#score')==getScore('#best')){
+		localStorage.best=getScore('#score');
+	}
+
+	console.log(localStorage.best);
+
+}
+
+function newGame(){
+	game.world.removeAll();
+	create();
 
 }
 
