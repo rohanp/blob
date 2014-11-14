@@ -1,6 +1,10 @@
 
+body{
+	background-color: #EAF1F1;
+}
+
 h1{
-	background-color: white;
+	background-color: #EAF1F1;
 	font-family: "Clear Sans", "Source Sans Pro", "Helvetica Neue", Helvetica;
 	font-size: 100px;
 	margin-bottom:0px;
@@ -14,9 +18,16 @@ div .label {
   line-height:1.5em;
 } 
 
+.score {
+  padding-right: 0;
+}
+
 
 .newGame{
 	margin-left: auto;
 	margin-right: auto;
 }
 
+.right{
+	float:right;
+}
