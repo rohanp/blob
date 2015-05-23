@@ -61,7 +61,9 @@ $('#newGame').click(function(){
 		newGame();
 	});
 
-$('#best').html("Best <br> " + localStorage.best);
+if(localStorage.best){
+	$('#best').html("Best <br> " + localStorage.best);
+}
 
 function preload() {
 
